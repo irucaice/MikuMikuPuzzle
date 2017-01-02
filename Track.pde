@@ -1,24 +1,33 @@
 class Track {
   AudioPlayer sound;  //サウンドデータ格納用の変数
-  int sw;//オケを鳴らし始める合図
+  int start;//オケを鳴らし始める合図
+  boolean playing;//鳴っているかどうかの状態
 
   //コンストラクタ
   Track(int n) {
     //----歌の欠片を登録-----------------------
-    //ファイルが配列分揃ったら sound = minim.loadFile("data/orche/track"+n+".wav");
+    //ファイル読み込み
     sound = minim.loadFile("data/track/track"+n+".wav");
-    sw = OFF;
+    start = OFF;
+    playing = false;
   }
 }
 
 //------------------------------------------------------------
 //wav単体を鳴らす
 void trackPlay(int n) {
-  orche[n].sound.play();  //再生
-  orche[n].sw = OFF;
+  orche[n].sound.loop();  //再生
+  orche[n].start = OFF;
   orche[n].sound.rewind();  //再生が終わったら巻き戻しておく
 }
 
-void orchePlay(int n) {
-  if (orche[n].sw==ON) trackPlay( n );
+void orchePlay(int n) { //startONの状態は最初の一回だけ
+  if (orche[n].start==ON) trackPlay( n );
 }
+
+//----------各トラックスタート
+void trackStart(int n) {//ミュージックスタート  //----------------kokokoko
+  orche[n].start = ON;//オケを再生
+  orche[n].playing = true;  //鳴っている状態はtrue
+}
+

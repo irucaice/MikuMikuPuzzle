@@ -2,6 +2,9 @@
 - 参考動画
   - YouTube:https://www.youtube.com/watch?v=_boaCbkvnb8
   - niconico:http://www.nicovideo.jp/watch/sm28141336
+  
+  [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/boaCbkvnb8/0.jpg)](http://www.youtube.com/watch?v=boaCbkvnb8)
+  
 - 参考ブログ
   -  【Processing+Traktor】Miku Miku Puzzle【作ってみた】:http://irucaice.hateblo.jp/entry/2016/02/04/004932
   

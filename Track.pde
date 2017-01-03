@@ -25,9 +25,20 @@ void orchePlay(int n) { //startONの状態は最初の一回だけ
   if (orche[n].start==ON) trackPlay( n );
 }
 
+//----------スタート
+void musicStart() {//ミュージックスタート
+  orche[0].start = ON;//オケを再生
+  musicSw = OFF;
+}
+
 //----------各トラックスタート
 void trackStart(int n) {//ミュージックスタート  //----------------kokokoko
   orche[n].start = ON;//オケを再生
   orche[n].playing = true;  //鳴っている状態はtrue
 }
 
+//----------フィニッシュスタート
+void finishStart() {//ミュージックスタート  //----------------kokokoko
+  finishAudio.start = ON;//オケを再生
+  finishAudio.playing = true;  //鳴っている状態はtrue
+}

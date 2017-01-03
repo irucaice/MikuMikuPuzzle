@@ -55,8 +55,28 @@ class Panel {
 
   //メーター描画  ---------------------------------------------------------
   void meterDraw() {
-    fill(200,100,100);
-    rect(posX, posY, 37*level , box_height);
+    //メーターの色をレベルごとに変える
+    if (2<level && level<=4) {
+      fill(167, 212, 241, 180);
+    } else
+      if (4<level && level<=7) {
+      fill(162, 248, 221, 180);
+    } else
+      if (7<level && level<=10) {
+      fill(179, 252, 134, 180);
+    } else
+      if (10<level && level<=13) {
+      fill(253, 254, 130, 180);
+    } else
+      if (13<level && level<=16) {
+      fill(254, 200, 85, 180);
+    } else
+      if (16<level) {
+      fill(255, 125, 115, 180);
+    } else {
+      fill(183, 173, 255, 180);
+    }
+    rect(posX, posY, 37*level, box_height);
     //枠
     stroke(80);//灰色
     strokeWeight(1);
@@ -91,3 +111,4 @@ class Panel {
     posY = SN[shuffledNumber].posY;
   }
 }
+

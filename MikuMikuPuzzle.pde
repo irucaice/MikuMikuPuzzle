@@ -2,10 +2,13 @@
 import promidi.*;//MIDIを扱う
 import ddf.minim.*;  //minimライブラリのインポート
 MidiIO midiIO;
+MidiOut midiOut;//MIDIを送信する
 Minim minim;  //Minim型変数であるminimの宣言
 
-//AudioPlayer vocal;
-Track []orche = new Track[8];
+int orcheNum = 7;
+//AudioPlayer;
+Track []orche = new Track[orcheNum];
+Track finishAudio;
 
 //音楽スタートボタンとメーター
 Panel startButton, meter;
@@ -31,10 +34,6 @@ int musicSw = OFF;
 //完成度
 int level = 0;
 
-//最初のデバイス選び
-String MIDIinputName;
-int MIDIinputNum;
-
 void setup() {
   size(900, 700);
   //MIDI IOのあれこれ--------------------------------------
@@ -43,27 +42,19 @@ void setup() {
   println("printPorts of midiIO");  
   //print a list of all available devices
   midiIO.printDevices();  
-
-  //配列の範囲外を超えないかtry catch
-  try {
-    for ( int i=0; i<5; i++ ) {
-      if (midiIO.getInputDeviceName(i).equals("Traktor Virtual Output") ) MIDIinputNum = i;
-    }
-  }
-  catch(ArrayIndexOutOfBoundsException e) {
-    println("MIDIinput:配列の範囲を超えています");
-  }
-
   //open the first midi channel of the first device
-  println("MIDIinputNum = " + MIDIinputNum);
-  midiIO.openInput(MIDIinputNum, 0); //---~~~~~~
+  midiIO.openInput(2, 0);
+  //getMidiOut(midiChannel, outDeviceNumber);
+//  midiOut = midiIO.getMidiOut(0, "Traktor Virtual Input"); //ch1
+
   //------------------------------------------------------
 
   minim = new Minim(this);  //初期化(setupの中じゃないといけないらしい)
   //バラオケの初期化
-  for (int i=0; i<7; i++) {
+  for (int i=0; i<orcheNum; i++) {
     orche[i] = new Track(i);
   }
+  finishAudio = new Track(100);//最後のオーディオ
   startButton = new Panel( 50, 50, 50, 50 );//スタートボタンの初期化
   meter = new Panel( 110, 50, 740, 50 ); //メータの初期化
 
@@ -84,7 +75,7 @@ void setup() {
   select[1] = -1;
   //------------------------------------------
   traktor = new MIDI(); //MIDIを扱う
-  mikuImage = loadImage("data/p539.png");//miku
+  mikuImage = loadImage("data/miku2.png");//miku
 }
 
 void FisherYatesShuffle( int[] array ) {//-----------
@@ -98,12 +89,22 @@ void FisherYatesShuffle( int[] array ) {//-----------
 //-------------------------------------------------------------------------
 void draw() {
   background(0);
+  //miku----------------------
   tint(170);
-  image(mikuImage, 352, 226);//miku
+  scale(0.5);
+  image(mikuImage, 600, 100);
   tint(255);
-  for (int i=0; i<7; i++) {
-    orchePlay(i);  //オケを鳴らす(ドラム含む全８種類)
-  }
+  scale(2);//miku------------
+  if (finishAudio.playing==false) {//フィニッシュするまでオケ鳴らす
+    for (int i=0; i<orcheNum; i++) {
+      orchePlay(i);  //オケを鳴らす(ドラム含む全８種類)
+    }
+  } else {
+    finishAudio.sound.play();//finish鳴らす
+    for (int i=0; i<orcheNum; i++) {
+      orche[i].sound.pause();  //オケをポーズ
+    }
+  }//--------------------------------
   startButton.startDraw(); //スタートボタン描画
   meter.meterDraw(); //メーター描画
   for (int i=0; i<20; i++) {//歌詞パネルを描画
@@ -111,19 +112,20 @@ void draw() {
   }
   levelCheck();//レベル(完成度)管理
 }
-
+//-------------------------------------------------------------------------
 
 //スケッチのプロセスが終わったら実行されるらしい。
 void stop() {
-  for (int i=0; i<5; i++) {
+  for (int i=0; i<orcheNum; i++) {
     orche[i].sound.close();  //サウンドデータを終了
     minim.stop();
   }
+  finishAudio.sound.close();
   super.stop();
 }
 
 void mousePressed() {
-  //もし、マウスがスタートボタンの範囲内だったら、
+  //マウスがスタートボタンの範囲内だったら------------
   if (mouseX > startButton.posX && mouseX < startButton.posX+startButton.box_width && mouseY > startButton.posY && mouseY < startButton.posY+startButton.box_height) {
     trackStart(0);//ドラムならす
   }
@@ -139,6 +141,7 @@ void mousePressed() {
     }
   }
   //--------------------------
+  //sendMIDI(1,127);
 }
 
 //シャッフルナンバーチェンジ
@@ -160,7 +163,7 @@ void levelCheck() {
   }
   level = Lv;
   int pos = orche[0].sound.position();
-  println("pos="+pos+", level="+level);
+  println("pos="+pos+", level="+level+", ");
   if (2<level && orche[1].playing==false && 29070<pos ) {//レベルが到達し、オケがまだ鳴ってなかったら
     trackStart(1);
   } else if (4<level && orche[2].playing==false && 29070<pos ) {
@@ -171,10 +174,12 @@ void levelCheck() {
     trackStart(4);
   } else if (13<level && orche[5].playing==false && 29070<pos ) {
     trackStart(5);
-  } else if (15<level && orche[6].playing==false && 29070<pos ) {
+  } else if (16<level && orche[6].playing==false && 29070<pos ) {
     trackStart(6);
+  } else if (level==20 && finishAudio.playing==false && 29000<pos ) {
+    finishStart();
   }
-}
+}//position()の最後 → 29090,29071
 
-//position()の最後 → 29090,29071
+//-------------------------------------------------------------------------
 

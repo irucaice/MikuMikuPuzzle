@@ -7,3 +7,6 @@
   
 ##概要
 - Traktor(DJソフトウェア)と初音ミクで音楽パズルを作った
+
+###お借りした音素材
+- 効果音 http://commons.nicovideo.jp/material/nc18111

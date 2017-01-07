@@ -1,20 +1,18 @@
-class MIDI{
-  int playSw; //pit==12にマッピング
-  int FX1; //pit==36にマッピング
-  
-  MIDI(){
-    playSw = OFF;
-  } 
-}
+class MIDI {
+  int [] sw = new int [3];
 
-void noteOn(Note note, int device, int channel) {
-  int vel = note.getVelocity();
-  int pit = note.getPitch();
-  println("pit = "+pit+"vel = "+vel);
-  if(pit==12){//A deck play
-  traktor.playSw = ON;
+  MIDI() {
+    sw[0] = 0;
+    sw[1] = 0;
+    sw[2] = 0;
   }
 }
-/*メモ
- traktorのノブにpit変化はない。つまみをいじるとvelが変化。
-*/
+
+//ここでMIDIを送信！！！！！
+void sendMIDI(int num) {
+  int CCnum = num+1;
+  promidi.Controller c = new promidi.Controller(CCnum, 0<traktorFX.sw[num] ? 0 : 127);//000~, 127(スイッチON)
+  //↑トラクタ側でも001とかにマッピングしておくこと！！！
+  midiOut.sendController(c);
+}
+

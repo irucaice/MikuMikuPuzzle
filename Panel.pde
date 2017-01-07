@@ -6,13 +6,8 @@ class Panel {
   int sw;//エディタオンオフスイッチ用
   int number;//歌詞用ナンバー
   int shuffledNumber;//歌詞shuffle用ナンバー
+  int shake;//正しければ0、正しくなければ+-2を振動
   PImage img;
-
-  //色
-  color lightBlue = color(190, 226, 255 );
-  color blue = color(150, 190, 255, 180);  //半透明
-  color darkBlue = color(110, 150, 255);
-  color blackBlue = color(20, 40, 170);
 
   //スタートボタン・メータ用コンストラクタ
   Panel( int _posX, int _posY, int _box_width, int _box_height ) {
@@ -29,16 +24,17 @@ class Panel {
     shuffledNumber = _shuffledNumber;
     posX = SN[shuffledNumber].posX;
     posY = SN[shuffledNumber].posY;
+    shake = 1;
 
     //----画像を登録-----------------------
     img = loadImage("data/lyrics/lyric"+number+".png");
   }
 
-  //ボタン描画  ---------------------------------------------------------
+  //スタートボタン描画  ---------------------------------------------------------
   void startDraw() {
     stroke(80);//灰色
     strokeWeight(1);
-    fill(0);
+    fill(scene==FINISH ? 255 : 0);//FINISHしたら255
     rect(posX, posY, box_width, box_height);
     //カーソルが触れたら
     if (posX<mouseX && mouseX<posX+box_width && posY<mouseY && mouseY<posY+box_height) {
@@ -48,7 +44,7 @@ class Panel {
       rect(posX+2, posY+2, box_width-4, box_height-4);
     }
     //三角形マーク--------------------------------------
-    fill(255);
+    fill(scene==FINISH ? 0 : 255);//FINISHしたら0
     noStroke();
     triangle( posX+13, posY+11, posX+41, posY+24, posX+13, posY+39);
   }
@@ -86,26 +82,30 @@ class Panel {
 
   //歌詞パネル描画  --------------------------------------------------------
   void lyricDraw() {
-    stroke(70);//灰色
     strokeWeight(1);
+    stroke(70);//灰色だがFINISHしたら線が見えなくなる
+    if (scene==FINISH)noStroke();
     noFill();
     rect(posX, posY, box_width, box_height);
     //選択されたら着色--------------------------------------
     if ( select[0]==number | select[1]==number ) {
-      fill(blue);
+      fill(244,162,249,150);
       rect(posX, posY, box_width, box_height);
     }
     //カーソルが触れたら枠----------------------------------
     if (posX<mouseX && mouseX<posX+box_width && posY<mouseY && mouseY<posY+box_height) {
       noFill();
       strokeWeight(2);
-      stroke(144, 194, 251);
+      stroke(134, 202, 174);
       rect(posX+1, posY+1, box_width-2, box_height-2);
     }
     //歌詞-----------------------------------------------
     fill(200);//灰色
     text( number, posX, posY+10 );
-    image( img, posX+1, posY+-2 );
+    image( img, posX+1+shake, posY+-2 );
+    if (shuffledNumber!=number) {
+      shake = (shake==1 ? -1 : 1);//振動
+    }
     //つねに変更がないか見張っておく-------------------------
     posX = SN[shuffledNumber].posX;
     posY = SN[shuffledNumber].posY;

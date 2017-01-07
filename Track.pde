@@ -11,6 +11,13 @@ class Track {
     start = OFF;
     playing = false;
   }
+
+  //スパーン用コンストラクタ
+  Track() {
+    sound = minim.loadFile("data/track/spaan.aif");
+    start = OFF;
+    playing = false;
+  }
 }
 
 //------------------------------------------------------------
@@ -32,13 +39,22 @@ void musicStart() {//ミュージックスタート
 }
 
 //----------各トラックスタート
-void trackStart(int n) {//ミュージックスタート  //----------------kokokoko
+void trackStart(int n) {//ミュージックスタート  //------------
   orche[n].start = ON;//オケを再生
   orche[n].playing = true;  //鳴っている状態はtrue
 }
 
 //----------フィニッシュスタート
-void finishStart() {//ミュージックスタート  //----------------kokokoko
-  finishAudio.start = ON;//オケを再生
+void finishStart() {//ミュージックスタート  //----------------
   finishAudio.playing = true;  //鳴っている状態はtrue
+  scene = FINISH;//sceneをFINISHとする
+
+  finishAudio.sound.play();//finish鳴らす
 }
+
+//----------スパーン鳴らす
+void spaanStart() {//ミュージックスタート  //----------------
+  spaanAudio.sound.play();//スパーン再生
+  spaanAudio.playing = true;
+}
+

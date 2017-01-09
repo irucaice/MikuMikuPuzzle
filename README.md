@@ -13,7 +13,7 @@
 
 ###利用方法
 - DJ ソフトウェア TRAKTOR PRO 2が必要です
-- Processingのライブラリ proMIDI(http://creativecomputing.cc/p5libs/promidi/)が必要です
+- Processingのライブラリ proMIDI(http://creativecomputing.cc/p5libs/promidi/ )が必要です
 - Miku_Miku_Puzzle.tsi というファイルをTRAKTORのPreferences->Contoroll Manager でインポートしてください
 
 ###現在確認してる動作環境

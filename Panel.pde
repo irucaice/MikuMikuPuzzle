@@ -101,7 +101,7 @@ class Panel {
     }
     //歌詞-----------------------------------------------
     fill(200);//灰色
-    text( number, posX, posY+10 );
+    //text( number, posX, posY+10 );
     image( img, posX+1+shake, posY+-2 );
     if (shuffledNumber!=number) {
       shake = (shake==1 ? -1 : 1);//振動

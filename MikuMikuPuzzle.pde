@@ -1,4 +1,3 @@
-//やりたかったことがloop();で解決しましたお疲れ様です！！！
 import promidi.*;//MIDIを扱う
 import ddf.minim.*;  //minimライブラリのインポート
 MidiIO midiIO;
@@ -41,6 +40,11 @@ final int FINISH = 1;
 int scene = 0;
 boolean fin = false;//エンド
 
+//Interaction
+int figNum = 6;
+Figure []figure = new Figure[figNum];
+//↑たくさん放てるといいと思ったがめんどくて結局figure[0]しか使ってないｗｗｗというのはウソ
+
 void setup() {
   size(900, 700);
   //MIDI IOのあれこれ--------------------------------------
@@ -78,12 +82,16 @@ void setup() {
     lyric[i] = new Panel( 0, 0, i, data[i], null );//歌詞用パネルの初期化
   }
   //------------------------------------------
-  select[0] = -1;
+  select[0] = -1;//選ばれているか
   select[1] = -1;
   //------------------------------------------
   traktorFX = new MIDI(); //MIDIを扱う
-  mikuImage = loadImage("data/miku2.png");//miku
+  mikuImage = loadImage("data/miku.png");//miku
   endImage = loadImage("data/end.png");
+  //------------------------------------------
+  for (int i=0; i<figure.length; i++) {//インタラクティブな図形
+    figure[i] = new Figure();
+  }
 }
 
 void FisherYatesShuffle( int[] array ) {//-----------
@@ -108,20 +116,23 @@ void draw() {
     if (36000<pos) fin=true;//FINISHおわたらエンドロールへ
   }
   if (scene!=FINISH) waveDraw();//音声波形描画
+  meter.meterDraw(); //メーター描画
   //miku----------------------
   tint( scene==FINISH ? 240 : 170);//FINISHしたら明るく
   scale(0.5);
-  image(mikuImage, 600, 100);
+  image(mikuImage, 480, -150);
   tint(255);
   scale(2);//miku------------
   startButton.startDraw(); //スタートボタン描画
-  meter.meterDraw(); //メーター描画
   for (int i=0; i<20; i++) {//歌詞パネルを描画
     lyric[i].lyricDraw();
   }
   levelCheck();//レベル(完成度)管理
   if (fin) {//エンドロール
     fin();
+  }
+  for (int i=0 ; i<figure.length ; i++) {
+    figure[i].interactDraw();//MIDI interaction
   }
   printMemo();//デバック用
 }
@@ -166,6 +177,8 @@ void mousePressed() {
     traktorFX.sw[2] = 1-traktorFX.sw[2];
     sendMIDI(2);
   }
+  //--------------------------
+  figure[0].interactStart(mouseX, mouseY);
 }
 
 //-------------------------------------------------------------------シャッフルナンバーチェンジ
@@ -217,8 +230,7 @@ void levelCheck() {
   GO = false;
 }//position()の最後 → 29090,29071
 
-//-------------------------------------------------------------------------
-
+//-------------------------------------------------------------------------finish
 void finish() {
   //ループする必要ないんだけど一回の指示でちゃんとポーズしてくれるか不安だから常にポーズしろって命令しとく
   for (int i=0; i<orcheNum; i++) {

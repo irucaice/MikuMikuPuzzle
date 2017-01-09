@@ -11,5 +11,10 @@
 ##概要
 - Traktor(DJソフトウェア)と初音ミクで音楽パズルを作った
 
+###現在確認してる動作環境
+- Mac
+- Processing 2.2.1
+- TRAKTOR Pro 2 は,なんでも良いはず
+
 ###お借りした音素材
 - 効果音 http://commons.nicovideo.jp/material/nc18111
